@@ -52,10 +52,8 @@ def crypto_currency_kb(product_type: str) -> InlineKeyboardMarkup:
     """
     builder = InlineKeyboardBuilder()
 
-    builder.add(InlineKeyboardButton(text="Bitcoin (BTC)", callback_data=f"crypto:{product_type}:BTC"))
-    builder.add(InlineKeyboardButton(text="Ethereum (ETH)", callback_data=f"crypto:{product_type}:ETH"))
-    builder.add(InlineKeyboardButton(text="USDT (ERC-20)", callback_data=f"crypto:{product_type}:USDT"))
-    builder.add(InlineKeyboardButton(text="TRON (TRX)", callback_data=f"crypto:{product_type}:TRX"))
+    builder.add(InlineKeyboardButton(text="Ethereum (ERC20)", callback_data=f"crypto:{product_type}:ETH"))
+    builder.add(InlineKeyboardButton(text="USDT (TRC-20)", callback_data=f"crypto:{product_type}:USDT"))
     builder.add(InlineKeyboardButton(text="Назад", callback_data=f"pay_method:{product_type}:back"))
 
     builder.adjust(1)  # По одной кнопке в ряду
