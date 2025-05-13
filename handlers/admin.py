@@ -45,7 +45,7 @@ async def cmd_admin(message: Message, config: Config):
     await message.answer(admin_text)
 
 
-@router.message(Command("confirm_payment", prefix_command=False))
+@router.message(Command("confirm_payment"))
 async def cmd_confirm_payment(message: Message, bot: Bot, db: Database, config: Config):
     """
     Команда для подтверждения платежа администратором
