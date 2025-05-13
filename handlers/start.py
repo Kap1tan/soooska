@@ -161,10 +161,20 @@ async def callback_need_help(callback: CallbackQuery):
     """
     from keyboards import need_help_kb
 
-    await callback.message.edit_text(
-        "Если у вас возникли вопросы или нужна помощь с оплатой, свяжитесь с нашим менеджером:",
-        reply_markup=need_help_kb()
-    )
+    try:
+        # Пробуем отредактировать сообщение
+        await callback.message.edit_text(
+            "Если у вас возникли вопросы или нужна помощь с оплатой, свяжитесь с нашим менеджером:",
+            reply_markup=need_help_kb()
+        )
+    except Exception as e:
+        # Если не получается отредактировать (например, сообщение с фото),
+        # отправляем новое сообщение
+        await callback.message.answer(
+            "Если у вас возникли вопросы или нужна помощь с оплатой, свяжитесь с нашим менеджером:",
+            reply_markup=need_help_kb()
+        )
+
     await callback.answer()
 
 
