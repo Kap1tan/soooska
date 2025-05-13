@@ -39,7 +39,8 @@ async def cmd_admin(message: Message, config: Config):
         f"/user_info [ID пользователя] - информация о пользователе\n"
         f"/stats - статистика бота\n"
         f"/broadcast - отправить сообщение всем пользователям\n"
-        f"/export_users - выгрузить список пользователей"
+        f"/export_users - выгрузить список пользователей\n"
+        f"/base - скачать базу данных"
     )
 
     await message.answer(admin_text)
@@ -586,3 +587,48 @@ async def callback_confirm_broadcast(callback: CallbackQuery, state: FSMContext,
 
 # Импортируем необходимые типы в конце файла
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+
+
+@router.message(Command("base"))
+async def cmd_download_database(message: Message, db: Database, config: Config):
+    """
+    Команда для скачивания файла базы данных
+    Доступно только администраторам
+    """
+    user_id = message.from_user.id
+
+    # Проверяем, является ли пользователь администратором
+    if user_id not in config.bot.admin_ids:
+        await message.answer("У вас нет прав для выполнения этой команды.")
+        return
+
+    try:
+        # Создаем копию базы данных
+        from datetime import datetime
+        import shutil
+        import os
+
+        # Формируем имя файла с текущей датой
+        current_date = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        backup_filename = f"database_backup_{current_date}.db"
+        
+        # Создаем копию базы данных
+        shutil.copy2(db.db_path, backup_filename)
+
+        # Отправляем файл
+        with open(backup_filename, 'rb') as file:
+            await message.answer_document(
+                document=file,
+                caption=f"📁 Резервная копия базы данных\n📅 {current_date}"
+            )
+
+        # Удаляем временный файл
+        os.remove(backup_filename)
+
+        # Логируем действие
+        logger.info(f"Администратор {user_id} скачал базу данных")
+
+    except Exception as e:
+        error_message = f"Ошибка при создании резервной копии базы данных: {str(e)}"
+        logger.error(error_message)
+        await message.answer(f"❌ {error_message}")
